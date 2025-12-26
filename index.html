@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<title>Lelenty</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background:linear-gradient(135deg, #ffafcc, #ffc8dd, #8de0fe);
+        font-family: "Arial", sans-serif;
+        overflow: hidden;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 450px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 40px rgba(255, 0, 100, 0.4);
+        animation: fadeIn 1.5s ease;
+    }
+
+    h1 {
+        font-size: 26px;
+        margin-bottom: 20px;
+    }
+
+    p{
+        color:black;
+    }
+
+    #loveText {
+        font-size: 22px;
+        font-weight: bold;
+        animation: textFade 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes textFade {
+        from { opacity: 0.4; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Cœurs animés */
+    .heart {
+        position: absolute;
+        color: rgba(255,255,255,0.9);
+        font-size: 18px;
+        animation: float 4s linear infinite;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(100vh); opacity: 1; }
+        100% { transform: translateY(-10vh); opacity: 0; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+       <h1 class="display-4 fw-bold">
+         <i class="fa fa-check-circle"></i>
+         <span class="typewriter" id="hero-title"></span>
+      </h1>
+     <p id="loveText"> Bisous Piso❤️</p>
+</div>
+<script>
+const messages = [
+    "Bisous Piso❤️",
+    "Bisous Piso❤️ 💕",
+    "Bisous Piso 💖",
+    "Bisous Piso❤️"
+];
+
+let index = 0;
+setInterval(() => {
+    document.getElementById("loveText").textContent = messages[index];
+    index = (index + 1) % messages.length;
+}, 2500);
+
+
+// Génération de cœurs animés
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = " 🤍 💋 ❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (15 + Math.random() * 20) + "px";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 4000);
+}
+
+setInterval(createHeart, 200);
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'écriture pour le titre principal
+    const titleElement = document.getElementById('hero-title');
+    const originalText = titleElement.textContent;
+    const phrases = [
+        "zany ry leleny eh",
+      "zany ry leleny eh"
+    ];
+    titleElement.textContent = '';
+    
+    const typeSpeeds = [40, 50, 60, 70];
+    const eraseSpeed = 10; 
+    const pauseBeforeErasing = 1500;
+    const pauseBeforeTyping = 200;
+    
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let isPaused = false;
+    
+    function typeLoop() {
+        const currentPhrase = phrases[phraseIndex];
+        
+        if (isPaused) {
+            setTimeout(typeLoop, isDeleting ? pauseBeforeTyping : pauseBeforeErasing);
+            isPaused = false;
+            return;
+        }
+        
+        if (isDeleting) {
+            // Effacer les caractères
+            titleElement.textContent = currentPhrase.substring(0, charIndex - 1);
+            charIndex--;
+            
+            // Si tout est effacé, passer à la phrase suivante
+            if (charIndex === 0) {
+                isDeleting = false;
+                isPaused = true;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+            }
+            
+            setTimeout(typeLoop, eraseSpeed);
+        } else {
+            // Taper les caractères
+            titleElement.textContent = currentPhrase.substring(0, charIndex + 1);
+            charIndex++;
+            
+            // Si la phrase est complète, commencer à effacer après une pause
+            if (charIndex === currentPhrase.length) {
+                isDeleting = true;
+                isPaused = true;
+            }
+            
+            // Vitesse de frappe aléatoire pour un effet plus naturel
+            const randomSpeed = typeSpeeds[Math.floor(Math.random() * typeSpeeds.length)];
+            setTimeout(typeLoop, randomSpeed);
+        }
+    }
+    
+    // Démarrer l'animation immédiatement
+    setTimeout(typeLoop, 400);
+    
+  
+});
+
+
+const slidesEl = document.getElementById("slides");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+const dotsWrap = document.getElementById("dots");
+
+const slides = Array.from(slidesEl.children);
+const total = slides.length;
+// let index = 0;
+
+// Génération des dots
+slides.forEach((_, i) => {
+  let dot = document.createElement("div");
+  dot.className = "dot" + (i === 0 ? " active" : "");
+  dot.addEventListener("click", () => goTo(i));
+  dotsWrap.appendChild(dot);
+});
+const dots = Array.from(document.querySelectorAll(".dot"));
+
+function update() {
+  slidesEl.style.transform = `translateX(${ -index * 100 }%)`;
+  dots.forEach((d, i) => d.classList.toggle("active", i === index));
+}
+
+function prev() {
+  index = (index - 1 + total) % total;
+  update();
+}
+
+function next() {
+  index = (index + 1) % total;
+  update();
+}
+
+function goTo(i) {
+  index = i;
+  update();
+}
+
+prevBtn.addEventListener("click", prev);
+nextBtn.addEventListener("click", next);
+
+</script>
+</body>
+</html>
